@@ -1,0 +1,15 @@
+#cloud-config
+datasource:
+  Ec2:
+    strict_id: false
+users:
+  - name: solovboy
+    groups: sudo
+    shell: /bin/bash
+    sudo: ['ALL=(ALL) NOPASSWD:ALL']
+    ssh-authorized-keys:
+      - ssh-rsa 
+AAAAB3NzaC1yc2EAAAADAQABAAABgQCfcMHLMB6uxzDqSEHs8TD/ApZSQ6J5v4IgdO+Bo3aQU84ukwHbBEtmg70pVoBa/Is1ZZAAXs8dBpTRIBApQN5XfVCUQLvoHpY0Iqae7J6Y0aLb0yTZL1U15fwub1dRy6g+8Pj2Pq9SXfX9hXHJ5KHduyyxy3GcflOuZK1FEoPdRrlHXoNtOeMEnZI7jEMxdpK8bp1Xh8fv571hBtlKdNM5YMM5MYXJrkT9GJET4pyK7WsLZ43McqCs6SSnh63fvZNjtqvMKq4RT15MiXgjQhWYtyrBLce/o8yQer3rrQ1YT9jE6vx3B1TMFSOI9xqoVBaA0QjEA5ZMGDG2XPtXTbJqtBhWWEDPT2CSy7c88HAqjsPoM8U/u9GVvKJ8K1MWbeOALKQeg1rJVqkNl+0zCxtWFP03lbU31Ay+F/llOARW0qLlD3adtgwq0E4Xu5TQeWqH5SxFutpHGaO0N6M5oRVdIAma54vltBGddlLvcC9OiXc/cFSdu2Od72XiJ3iZwI0= 
+solovboy@solovboy-osx
+
+
