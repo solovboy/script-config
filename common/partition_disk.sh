@@ -72,26 +72,26 @@ fi
 
 unique_hosts=`mktemp`
 sort -u $hosts > $unique_hosts
-
-parallel-ssh -h $unique_hosts -i "sudo parted ${disk} mklabel gpt -s"
+echo "Table"
+parallel-ssh -h $unique_hosts -i "sudo parted $disk mklabel gpt -s"
 if [ $? -ne 0 ]; then
     echo "Failed to create partition table on $disk"
     exit 1
 fi
-
-parallel-ssh -h $unique_hosts -i "sudo parted -a optimal ${disk} mkpart primary 0% 100%"
+echo "Partition"
+parallel-ssh -h $unique_hosts -i "sudo parted -a optimal $disk mkpart primary 0% 100%"
 if [ $? -ne 0 ]; then
     echo "Failed to create partition on $disk"
     exit 1
 fi
-
-parallel-ssh -h $unique_hosts -i "sudo parted ${disk} name ${number} ydb_disk_ssd_0${number}"
+echo "Name"
+parallel-ssh -h $unique_hosts -i "sudo parted $disk name 1 ydb_disk_ssd_0${number}"
 if [ $? -ne 0 ]; then
     echo "Failed to name partition on $disk"
     exit 1
 fi
-
-parallel-ssh -h $unique_hosts -i "sudo partx --u ${disk}"
+echo "Update"
+parallel-ssh -h $unique_hosts -i "sudo partx --u $disk"
 if [ $? -ne 0 ]; then
     echo "Failed to update partition table on $disk"
     exit 1

@@ -159,6 +159,7 @@ if [[ -z "$restart_ydb" ]]; then
     log "Format disks"
 
     for d in "${DISKS[@]}"; do
+        echo $d
         $debug parallel-ssh -i -h "$HOSTS_FILE" -t 0 -p 20 "sudo LD_LIBRARY_PATH=$YDB_SETUP_PATH/lib $YDB_SETUP_PATH/bin/ydbd admin bs disk obliterate $d"
         if [[ $? -ne 0 ]]; then
             echo "ERROR: can't obliterate disk $d on hosts"
@@ -175,10 +176,10 @@ NODE_BROKERS=$(cat "$HOSTS_FILE" | sed "s/.*/--node-broker &:$GRPC_PORT/" | tr '
 
 log "Start static nodes"
 
-$debug parallel-ssh -h "$HOSTS_FILE" -t 0 -p 20 "sudo LD_LIBRARY_PATH=$YDB_SETUP_PATH/lib bash -c ' \
+$debug parallel-ssh -h "$HOSTS_FILE" -t 0 -p 20 "ulimit -c unlimited; sudo LD_LIBRARY_PATH=$YDB_SETUP_PATH/lib bash -c ' \
     taskset -c $STATIC_TASKSET_CPU nohup \
     $YDB_SETUP_PATH/bin/ydbd server --log-level 3 --tcp --yaml-config $YDB_SETUP_PATH/cfg/config.yaml \
-    --grpc-port $((GRPC_PORT++)) --ic-port $((IC_PORT++)) --mon-port $((MON_PORT++)) --node static &>$YDB_SETUP_PATH/logs/static.log &'"
+    --grpc-port $((GRPC_PORT++)) --ic-port $((IC_PORT++)) --mon-port $((MON_PORT++)) --node static &>$YDB_SETUP_PATH/logs/static.log 2>&1 &'"
 
 if [[ $? -ne 0 ]]; then
     echo "ERROR: can't start static nodes on hosts"

@@ -2,7 +2,7 @@
 
 
 DISK_LABEL="/dev/disk/by-partlabel/ydb_disk_ssd_01"
-YDBD_URL="https://storage.yandexcloud.net/ydb-benchmark-builds/ydb-23-3.tar.gz"
+YDBD_URL="https://binaries.ydb.tech/release/23.2.12/ydbd-23.2.12-linux-amd64.tar.gz"
 
 usage() {
     echo "setup_mirror_3_dc.sh --hosts <hosts_file> --disks <disk1> <disk2> <disk3>"
@@ -86,27 +86,30 @@ common_dir="$script_dir/common"
 
 echo "Killing YDB if it is running"
 parallel-ssh -h "$hosts" "sudo pkill -9 ydbd"
-
+echo "Partition disk!"
 declare -i number=1
 for disk in "${disks[@]}"
 do
     "$common_dir"/partition_disk.sh --hosts "$hosts" --disk "$disk" --number "$number"
     ((number++))
 done
-
+echo "Transparent hugepages!"
 "$common_dir"/enable_transparent_hugepages.sh --hosts "$hosts"
 
 parallel-ssh -h "$hosts" "sudo apt-get update; sudo apt-get install -yyq libaio1 libidn11"
 
 tmp_dir=`mktemp -d`
-
-"$script_dir"/generate_ydb_configs.py --disks "${disks[@]}" --output-dir $tmp_dir --hosts "$hosts"
+echo "Generate configs!"
+"$script_dir"/test.py --disks "${disks[@]}" --output-dir $tmp_dir --hosts "$hosts"
 if [[ $? -ne 0 ]]; then
     echo "Failed to generate configs"
     exit 1
 fi
 
-"$script_dir"/setup.sh --ydbd-url $YDBD_URL --config $tmp_dir/setup_config
+wget -q $YDBD_URL $tmp_dir
+
+echo "Setup!"
+"$script_dir"/setup.sh --ydbd "$script_dir"/ydbd-23.2.12-linux-amd64.tar.gz --config $tmp_dir/setup_config
 if [[ $? -ne 0 ]]; then
     echo "Failed to setup YDB"
     exit 1

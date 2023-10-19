@@ -50,4 +50,5 @@ unique_hosts=`mktemp`
 sort -u $hosts > $unique_hosts
 some_host=`head -n 1 $unique_hosts`
 
+echo "pssh"
 parallel-ssh -h $unique_hosts "echo always | sudo tee /sys/kernel/mm/transparent_hugepage/enabled"

@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 import argparse
 import os
 import pathlib
@@ -245,7 +247,7 @@ def write_setup_config(disk, disk_type, hosts_num, storage_cores_taskset, comput
     config = f"""\
 HOSTS_FILE="{hosts_file}"
 
-DISKS=({disk})
+DISKS=({disk[0]} {disk[1]} {disk[2]})
 
 CONFIG_DIR="{output_dir}"
 YDB_SETUP_PATH="/opt/ydb"
