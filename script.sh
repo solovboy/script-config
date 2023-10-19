@@ -100,7 +100,7 @@ parallel-ssh -h "$hosts" "sudo apt-get update; sudo apt-get install -yyq libaio1
 
 tmp_dir=`mktemp -d`
 echo "Generate configs!"
-"$script_dir"/test.py --disks "${disks[@]}" --output-dir $tmp_dir --hosts "$hosts"
+"$script_dir"/generate_configs.py --disks "${disks[@]}" --output-dir $tmp_dir --hosts "$hosts"
 if [[ $? -ne 0 ]]; then
     echo "Failed to generate configs"
     exit 1
